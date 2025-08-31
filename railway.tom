@@ -1,0 +1,39 @@
+[build]
+builder = "nixpacks"
+
+[env]
+# Usar PHP 8.2 en Railway
+PHP_VERSION = "8.2"
+
+# Configuración de Composer
+COMPOSER_ALLOW_SUPERUSER = "1"
+COMPOSER_MEMORY_LIMIT = "-1"
+
+[phases.build]
+commands = [
+  # Instalar dependencias según composer.json
+  "composer install --no-dev --optimize-autoloader",
+
+  # Asegurar .env
+  "test -f .env || cp .env.example .env",
+  "chmod 664 .env",
+
+  # Preparar storage y logs
+  "mkdir -p storage/logs bootstrap/cache",
+  "chmod -R 775 storage storage/logs bootstrap/cache",
+
+  # Optimización de Laravel
+  "php artisan config:clear || true",
+  "php artisan route:clear || true",
+  "php artisan view:clear || true",
+  "php artisan config:cache || true",
+  "php artisan route:cache || true",
+  "php artisan view:cache || true",
+
+  # Migraciones automáticas
+  "php artisan migrate --force || true"
+]
+
+[start]
+# Levantar Laravel en el puerto asignado por Railway
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
