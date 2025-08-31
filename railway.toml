@@ -3,7 +3,7 @@ builder = "nixpacks"
 
 [env]
 # Usar PHP 8.2 en Railway
-PHP_VERSION = "8.2"
+PHP_VERSION = "8.1"
 
 # Configuración de Composer
 COMPOSER_ALLOW_SUPERUSER = "1"
